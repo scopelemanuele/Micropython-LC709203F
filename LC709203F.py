@@ -1,6 +1,5 @@
 import time
 import machine
-import _onewire as _ow
 
 
 CRC_TABLE = bytearray([
