@@ -51,19 +51,24 @@ LC709203F_REG_ITE = 0x0F
 
 
 """
-Design Capacity of Battery APA(0x0B)
-        |  Type−01,Type−03  |     Type−06 |   Type−07
---------------------------------------------
-100 mAh |       0x08        |    0x0D    |   0x07
-200 mAh |       0x0B        |    0x15    |   0x0C
-500 mAh |       0x10        |   0x20     |  0x18
-1000 mAh|       0x19        |   −        |  0x28
-2000 mAh|      0x2D         |   −        |  0x40
-3000 mAh        0x36        |   −        |  0x4D
-
-Design Capacity of Battery APA(0x0B)
-        |   Type−04         |   Type−05
-2600 mAh|   0x1A            |   0x0D
+     ________________________________________________________
+    |Design Capacity of Battery APA(0x0B)                    |
+    |--------------------------------------------------------|
+    |        |  Type−01,Type−03  |     Type−06 |   Type−07   |
+    |--------------------------------------------------------|
+    |100 mAh |       0x08        |   0x0D     |   0x07       |
+    |200 mAh |       0x0B        |   0x15     |   0x0C       |
+    |500 mAh |       0x10        |   0x20     |   0x18       |
+    |1000 mAh|       0x19        |   −        |   0x28       |
+    |2000 mAh|       0x2D        |   −        |   0x40       |
+    |3000 mAh|       0x36        |   −        |   0x4D       |
+    ----------------------------------------------------------
+     ________________________________________
+    |Design Capacity of Battery APA(0x0B)    |
+    |----------------------------------------|
+    |        |   Type−04         |   Type−05 |
+    |2600 mAh|   0x1A            |   0x0D    |
+    ------------------------------------------
 """
 
 
@@ -102,6 +107,15 @@ class BatteryMonitor:
         data = self._readReg16(LC709203F_ADDRESS, LC709203F_REG_CELL_VOLT)
         return data/1000
 
+    def getCurrentDirection(self):
+        data = self._readReg16(LC709203F_ADDRESS, LC709203F_REG_CURR_DIR)
+        if data == 0x0001:
+            return "Charge"
+        if data == 0xffff:
+            return "Discharge"
+        if data == 0:
+            return "Auto"
+
     def getCapacity(self):
         data = self._readReg16(LC709203F_ADDRESS, LC709203F_REG_RSOC)
         return data
@@ -131,4 +145,5 @@ class BatteryMonitor:
         print("Batt. Volt: ", self.getBatteryVoltage())
         print("Batt. Residual Cap.", self.getCapacity())
         print("Batt. Empty", self.getEmpty())
+        print("Direction: ", self.getCurrentDirection())
         print("Good!")
